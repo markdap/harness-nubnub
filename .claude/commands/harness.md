@@ -2,11 +2,19 @@
 
 ---
 
+## 시작 전 확인
+
+**`docs/HANDOFF.md`가 존재하면 반드시 먼저 읽어라.** 이전 세션에서 무엇을 했고, 무엇을 다음에 해야 하는지 파악한 뒤 작업을 이어간다.
+
+---
+
 ## 워크플로우
 
 ### A. 탐색
 
 `/docs/` 하위 문서(PRD, ARCHITECTURE, ADR 등)를 읽고 프로젝트의 기획·아키텍처·설계 의도를 파악한다. 필요시 Explore 에이전트를 병렬로 사용한다.
+
+> **docs가 플레이스홀더 상태이면**: C·D·E 단계로 넘어가지 말고, B 단계에서 감독님과 대화하며 docs를 채우는 것을 먼저 제안하라. docs 품질 = 결과물 품질이다.
 
 ### B. 논의
 
@@ -106,10 +114,11 @@
 
 ## Acceptance Criteria
 
-```bash
-npm run build   # 컴파일 에러 없음
-npm test        # 테스트 통과
-```
+\`\`\`bash
+# 프로젝트 기술 스택에 맞는 검증 커맨드를 넣어라
+# 예: npm run build && npm test
+# 예: python -m pytest
+\`\`\`
 
 ## 검증 절차
 
@@ -149,3 +158,23 @@ execute.py가 자동으로 처리하는 것:
 
 - **error 발생 시**: `phases/{task-name}/index.json`에서 해당 step의 `status`를 `"pending"`으로 바꾸고 `error_message`를 삭제한 뒤 재실행한다.
 - **blocked 발생 시**: `blocked_reason`에 적힌 사유를 해결한 뒤, `status`를 `"pending"`으로 바꾸고 `blocked_reason`을 삭제한 뒤 재실행한다.
+
+---
+
+## Plan mode 완료 후 판단 기준
+
+Plan mode에서 계획을 완성하고 감독님이 승인하면, 다음 기준으로 판단해서 안내하라:
+
+**`/harness` 제안 (큰 구현 블록):**
+- 3개 이상의 파일/모듈을 새로 만들어야 하는 경우
+- 여러 step으로 나눠야 하는 기능 블록
+- execute.py 자동화가 효율적인 반복 작업
+
+→ "계획이 승인되면 `/harness` 명령을 주시면 phases 파일을 설계하고 execute.py로 실행하겠습니다."
+
+**직접 구현 (작은 수정):**
+- 파일 1~2개 수정
+- 버그 수정, 텍스트 변경, 설정 조정
+- 대화 흐름에서 바로 처리 가능한 작업
+
+→ 안내 없이 바로 구현한다.
