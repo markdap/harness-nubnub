@@ -1,13 +1,74 @@
-# 프로젝트: {프로젝트명}
-
 <!--
 이 파일은 AI가 코딩할 때 가장 먼저 읽는 "헌법"이다.
+프로젝트가 무엇인지 설명하는 글이 아니다. 코드 짜기 전 무조건 따라야 할 규칙만 담는다.
+
 새 프로젝트를 시작할 때 {} 플레이스홀더를 채울 것.
+**채우는 순서는 PRD → ARCHITECTURE → ADR → CLAUDE.md (마지막).** 다른 파일이 비어있으면 거기부터 채운 뒤 돌아오라.
+
+★ CLAUDE.md에 들어갈 것 (= 아래 5개 섹션이 전부):
+  - 기술 스택 (어떤 프레임워크·언어·라이브러리)
+  - 아키텍처 규칙 (CRITICAL = 어겼을 때 시스템이 깨짐)
+  - 개발 프로세스 (TDD, 커밋 메시지 형식 등)
+  - 로드맵 Phase 용어 약속 (디렉토리 네이밍)
+  - SubAgent / 원칙
+
+★ CLAUDE.md에 절대 들어가면 안 되는 것 (각각 다른 파일로):
+  - 사용자·타겟 고객 정의 → docs/PRD.md
+  - 기능 enumeration · MVP 포함/제외 → docs/PRD.md
+  - v2 로드맵 → docs/PRD.md 또는 phases/ 후속 디렉토리
+  - phase 진행 순서·timeline → phases/ 디렉토리 구조 자체로 자명
+  - 결정 근거·트레이드오프 (왜 이 기술인가) → docs/ADR.md
+  - 도메인·아키텍처 세부 (데이터 흐름, 폴더 구조 등) → docs/ARCHITECTURE.md
+
+판단 기준 한 줄: "AI가 코드 짜기 직전에 이걸 안 읽으면 사고가 나는가?"
+  → YES면 CLAUDE.md. NO면 다른 파일.
 
 Harness 워크플로우: `/harness` 명령을 입력하면 AI가 이 파일과 docs/를 읽고
 phases/ 설계 → execute.py 자동 실행까지 처리한다.
 Codex 등 다른 AI CLI를 사용할 때도 "/harness"라고 하면 .claude/commands/harness.md를 읽고 동일하게 동작한다.
+
+★ 채우기가 끝나면 이 주석 블록 전체와 아래 예시 블록 전체를 **반드시 제거**하라.
 -->
+
+<!--
+============================================
+참고용 예시 (가상의 todo 앱). 분량 감각용. 채우기 끝나면 이 블록도 제거.
+============================================
+
+# 프로젝트: simple-todo
+
+## 기술 스택
+- Next.js 15 (App Router)
+- TypeScript strict mode
+- Tailwind CSS v4
+- Supabase (Auth + PostgreSQL)
+
+## 아키텍처 규칙
+- CRITICAL: 모든 DB 접근은 server action 또는 route handler에서만. 클라이언트 컴포넌트에서 supabase client 직접 호출 금지.
+- CRITICAL: API 키·DB 비밀번호는 환경변수로만. 코드에 하드코딩 금지. .env.local은 .gitignore.
+- 컴포넌트는 components/, 타입은 types/ 분리.
+- 서버 컴포넌트가 기본. 'use client'는 인터랙션 필요한 컴포넌트에만.
+
+## 개발 프로세스
+- CRITICAL: TDD. 새 기능은 Vitest 테스트 먼저, 통과하는 구현을 그 다음.
+- 커밋 메시지: conventional commits (feat:, fix:, docs:, refactor:).
+- "qa 끝났다"고 판단하면 레슨런을 docs/ADR.md에 기록.
+
+## 로드맵 Phase 용어 약속
+- Phase 단계: 큰 기능 블록. 디렉토리 → `0-mvp`, `1-auth`
+- Phase 버전: Phase 내 세부. 디렉토리 → `1.1-email-auth`
+- Step: Phase 구현 단위. 파일 → `step0.md`, `step1.md`
+
+## SubAgent / 원칙
+- 필요 시 `.claude/agents/_template.md` 복사해서 만든다.
+- 감독님이 비개발자이므로, 기술 용어는 풀어서 설명한다.
+
+============================================
+예시 끝 (이 블록 전체 제거 필수)
+============================================
+-->
+
+# 프로젝트: {프로젝트명}
 
 ## 기술 스택
 <!-- 예: Next.js 15, TypeScript strict mode, Tailwind CSS -->
