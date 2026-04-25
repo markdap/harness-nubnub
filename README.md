@@ -42,9 +42,9 @@ git pull origin main
 
 ## 이 하네스에 뭐가 들어있나
 
-- `docs/` — PRD, ARCHITECTURE, ADR, HANDOFF 템플릿. 새 프로젝트마다 AI와 대화하며 채운다.
+- `docs/` — PRD, ARCHITECTURE, ADR 템플릿. 새 프로젝트마다 AI와 대화하며 채운다.
 - `CLAUDE.md` / `AGENTS.md` — 프로젝트 규칙. Claude Code와 Codex CLI가 둘 다 읽는다.
-- `.claude/commands/` — `/harness`, `/handoff` 슬래시 명령
+- `.claude/commands/` — `/harness` 슬래시 명령
 - `.claude/agents/` — 서브에이전트 슬롯 (필요할 때 만들어 쓰는 용)
 - `scripts/execute.py` — phase 자동 실행 엔진
 - `scripts/hooks/` — 위험 명령 차단, 반복 에러 감지 hook
@@ -54,11 +54,15 @@ git pull origin main
 
 ## 세션 이어받기
 
-세션 컨텍스트가 꽉 찰 것 같으면 종료 전에:
+컨텍스트가 꽉 차기 전에 전역 명령 실행:
 
 ```
 /handoff
 ```
 
-→ AI가 `docs/HANDOFF.md`에 현재 상태 기록.
-다음 세션 열면 AI가 이걸 먼저 읽고 이어서 작업한다.
+→ 프로젝트 루트의 `handoffs/AI_Continuation_Document-{타임스탬프}-KST.md`에 저장된다.
+
+다음 세션에서 `/harness` 실행하면 AI가 `handoffs/` 폴더의 가장 최근 파일을 자동으로 읽고 이어받는다. 별도 지시 불필요.
+
+> `/handoff`는 user 전역 명령이라 하네스에 포함돼 있지 않다.
+> 새 맥북·새 환경에서는 `/Users/{유저}/.claude/commands/handoff.md`에 설치해야 사용 가능.
