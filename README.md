@@ -1,117 +1,286 @@
 # harness-nubnub
 
-감독님 전용 Claude Code 개발 하네스. 새 프로젝트 시작할 때마다 이 레포를 템플릿으로 복사해서 사용한다.
+감독님 전용 Claude Code 개발 하네스. **새 프로젝트 시작할 때마다 이 레포를 템플릿으로 복사해서 사용한다.**
 
 ---
 
-## 새 프로젝트 시작하는 법 (까먹었을 때 보기)
+## 이게 뭐야?
 
-### 1. GitHub에서 새 레포 만들기
+Claude Code (또는 Codex) 와 함께 *제품을 0에서 시작해서 운영까지* 만드는 워크플로우 템플릿.
 
-1. `github.com/markdap/harness-nubnub` 접속
+**매번 같은 4단계 명령어**로:
+1. 아이디어를 깊이 파고
+2. 자동으로 문서화하고
+3. 자동으로 코드를 짜고
+4. 세션을 보존한다.
+
+이걸 무한 반복하면 됨.
+
+---
+
+## 새 프로젝트 시작하는 법 (3단계)
+
+### 1️⃣ GitHub에서 새 레포 만들기
+
+1. https://github.com/markdap/harness-nubnub 접속
 2. 우측 상단 녹색 **"Use this template"** → **"Create a new repository"**
-3. Owner: `markdap` (회사 org 권한 없으면 일단 개인계정)
-4. Repository name: 새 프로젝트명 (예: `url2chart`)
-5. Private 선택 → **Create repository**
+3. Owner: `markdap` (또는 회사 org)
+4. Repository name: 새 프로젝트명 (예: `wake-up-buddy`)
+5. **Private** 선택
+6. **Create repository** 클릭
 
-### 2. 로컬에 가져오기
+### 2️⃣ 로컬에 받기
 
-**Case A — 로컬 폴더가 없는 경우:**
 ```bash
 cd ~/원하는위치
 git clone https://github.com/markdap/{새프로젝트명}
+cd {새프로젝트명}
 ```
 
-**Case B — 로컬 폴더를 이미 만들어놓은 경우:**
+### 3️⃣ Claude Code 켜고 시작
+
 ```bash
-cd ~/원하는위치/{새프로젝트명}
-git init
-git remote add origin https://github.com/markdap/{새프로젝트명}.git
-git pull origin main
+claude
 ```
 
-### 3. Claude Code로 폴더 열고 시작 → 아래 "권장 워크플로우" 따라가기
+→ 이제 아래 사이클을 따라가면 됨.
 
 ---
 
-## 권장 워크플로우 (안 까먹게 베스트 프랙티스)
-
-> Claude Code 열자마자 이 순서로 진행한다. 기획 → 구현 → 종료 한 사이클 전체.
-
-### 1차 세션: 기획 초안
-
-**Claude Code 열자마자:**
-1. **Shift+Tab** 눌러서 plan mode 켜기 (AI가 멋대로 파일 안 만들게 막는 안전장치)
-2. 입력:
-   ```
-   /harness {기획하고 싶은 내용 한 줄}
-   ```
-   예: `/harness URL 입력하면 차트로 변환해주는 웹 도구 만들고 싶어`
-
-**그러면 AI가 이렇게 동작한다:**
-1. `handoffs/` 폴더 확인 → 첫 세션이라 비어있음 → 패스
-2. `docs/` 폴더 확인 → 플레이스홀더 상태 → "**PRD부터 같이 채울까요?**" 제안
-3. 대화로 `docs/PRD.md` 채움 (목표 / 사용자 / 핵심 기능)
-4. PRD 끝나면 → `docs/ARCHITECTURE.md` (기술 스택 / 폴더 구조 / 데이터 흐름)
-5. ARCHITECTURE 끝나면 → `docs/ADR.md` (왜 이 기술을 골랐는가)
-6. ADR 끝나면 → `CLAUDE.md` (위에서 결정한 규칙들 요약)
-7. 다 채워지면 → AI가 plan 파일로 정리해서 승인 요청
-
-> 보통 여기까지가 1차 세션. 머리 식히고 다음 세션에서 다시 본다.
-> **종료 전 `/handoff` 치는 것 잊지 말기** (현재 상태가 `handoffs/` 폴더에 자동 저장됨).
-
-### 2차 세션: 기획 재정비
-
-1. Claude Code 다시 열기
-2. plan mode 켜고 (Shift+Tab) 입력:
-   ```
-   /harness 어제 짠 기획 다시 보자
-   ```
-
-**그러면 AI가:**
-1. `handoffs/`에서 어제 핸드오프 자동으로 읽고 컨텍스트 복원
-2. 현재 docs 상태 파악 후 어디서부터 이어갈지 확인
-3. 감독님과 대화하며 docs 수정
-
-### 3차+ 세션: 구현 시작
-
-**기획이 충분히 다듬어졌다고 판단되면:**
-1. plan mode 꺼도 OK (Shift+Tab 다시 누르면 꺼짐)
-2. 입력:
-   ```
-   /harness 이제 구현 시작하자
-   ```
-
-**그러면 AI가:**
-1. `phases/{task-name}/` 폴더에 step별 구현 지시서(`step0.md`, `step1.md`, ...) 설계
-2. 감독님 승인 요청
-3. 승인 후 자동 실행:
-   ```bash
-   python3 scripts/execute.py {task-name}
-   ```
-4. step별로 구현 → 테스트 → 커밋 반복 (자동)
-
-### 세션 종료 전 (매번)
+## ⭐ 매번 같은 4단계 사이클 (외워둘 것)
 
 ```
-/handoff
+1. /grill-with-docs    ← 아이디어를 AI랑 깊이 파기
+2. /harness-write      ← AI가 자동으로 문서 채워줌
+3. /harness-go         ← AI가 자동으로 코드 짜줌
+4. /handoff            ← 세션 끝낼 때 (트리거 룰)
 ```
 
-→ `handoffs/AI_Continuation_Document-{타임스탬프}-KST.md`로 현재 상태 저장.
-→ 다음 세션에서 `/harness` 치면 자동으로 흡수해서 이어받음.
-
-> `/handoff`는 user 전역 명령이라 하네스에 포함돼 있지 않다.
-> 새 맥북·새 환경에서는 `/Users/{유저}/.claude/commands/handoff.md`에 별도 설치 필요.
+이게 *전부야*. 매번 같음.
 
 ---
 
-## 이 하네스에 뭐가 들어있나
+## 각 단계가 뭘 하는지 (자세히)
 
-- `docs/` — PRD, ARCHITECTURE, ADR 템플릿. 새 프로젝트마다 AI와 대화하며 채운다.
-- `CLAUDE.md` / `AGENTS.md` — 프로젝트 규칙. Claude Code와 Codex CLI가 둘 다 읽는다.
-- `.claude/commands/` — `/harness` 슬래시 명령
-- `.claude/agents/` — 서브에이전트 슬롯 (필요할 때 만들어 쓰는 용)
-- `scripts/execute.py` — phase 자동 실행 엔진
-- `scripts/hooks/` — 위험 명령 차단, 반복 에러 감지 hook
-- `phases/` — 실제 구현 step들이 들어가는 곳 (`/harness` 명령으로 생성)
-- `handoffs/` — 세션 종료 전 `/handoff`로 저장한 컨텍스트 (다음 세션에서 자동 흡수)
+### 1️⃣ `/grill-with-docs` — 아이디어 깊이 파기
+
+감독님이 *"아침 기상 앱 만들고 싶어"* 같은 한 줄을 던지면, AI가 끈질긴 인터뷰를 시작:
+
+- *"사용자가 누구야? 못 일어나는 사람? 의무가 강한 직장인?"*
+- *"'진짜 일어남'의 정의가 뭐야? 침대에서 나옴? 화장실 도착?"*
+- *"결제는 어떻게? 토스페이먼츠?"*
+
+이 인터뷰 도중:
+- **모호한 거 있으면** → AI가 자동으로 `/prototype`을 호출. 한 페이지에 *라디칼하게 다른 UI 3~4개*를 만들어 비교하게 해줌.
+- **도메인 용어** 정해지면 → `CONTEXT.md`가 자동으로 생성됨.
+- **되돌리기 어려운 결정** 나오면 → ADR(결정 일지) 후보로 표시됨.
+
+**언제 끝남?** 감독님이 *"이제 충분해"* 싶을 때. 보통 30분~1시간.
+
+### 2️⃣ `/harness-write` — 자동 문서 채우기
+
+그릴 끝나면 그냥 `/harness-write` 한 줄 치면 됨. **인자(추가 입력) 없음.**
+
+AI가 자동으로:
+- `docs/PRD.md` ← *무엇*을 만들지 (목표 / 사용자 / 기능 / 안 만들 것 / 디자인)
+- `docs/ARCHITECTURE.md` ← *어떻게* 만들지 (스택 / 구조 / 데이터 흐름)
+- `docs/ADR.md` ← *왜* 이 기술 골랐는지 + 트레이드오프
+- `CLAUDE.md` ← *AI가 절대 어기면 안 되는 룰*
+
+**감독님이 추가 입력 0회.** 그릴에서 다 끌어냈으니 다시 안 물어봄.
+
+이미 docs가 있으면? AI가 알아서 *후속 호출*로 인식하고:
+- `PRD.md` 맨 위에 새 `## v2` 섹션 추가
+- 옛 `## v1` 섹션은 *superseded* 태그로 보존
+- 새 섹션에 *"이 변경이 ARCH/ADR/CLAUDE에 미치는 영향"* 명시
+
+### 3️⃣ `/harness-go` — 자동 코드 짜기
+
+문서 채웠으면 그냥 `/harness-go` 치면 됨.
+
+AI가 알아서:
+1. **다음 phase 이름 추론** (예: *"1-social-alarm 맞나요?"*)
+2. **step 6개로 쪼갠 계획** 보여줌 → 감독님 승인
+3. **`python3 scripts/execute.py 1-social-alarm` 자동 실행**
+4. step별로 알아서 코드 작성, 테스트, 커밋
+5. 실패하면 *3번 재시도*
+6. **GitHub Issue 자동 발행** (PR 머지하면 자동 close)
+7. 끝나면 *"이번에 시도했지만 안 된 것 있나요?"* 물어봄 → 있으면 `docs/ADR.md`에 LESSON으로 박힘
+
+### 4️⃣ `/handoff` — 세션 보존
+
+세션 끝낼 때 한 번 치면 됨.
+
+AI가 *"오늘 뭐 했고, 어디서 막혔고, 내일 뭐 해야 하는지"*를 한 페이지 문서로 만들어 `handoffs/` 폴더에 저장.
+
+**다음 세션 켜고** *"`/handoff` 가장 최근 거 읽고 이어서"* 한 줄 치면, 어제 컨텍스트 그대로 복원됨.
+
+**언제 부르나?** 다음 중 *하나라도* 해당하면:
+- 컨텍스트 70~80% 찼다 싶을 때
+- phase 끝났을 때
+- 1시간 이상 자리 뜨기 전
+- *"오늘 시도했는데 안 된 거"* 1건 이상 있을 때
+
+---
+
+## 이 사이클에서 빠져나올 때 (예외 룰)
+
+### 🔧 5분 안에 끝나는 작은 fix
+
+- 텍스트 변경, 색깔 바꾸기, 작은 버그
+- 사이클 1·2·3 *스킵*, 그냥 직접 수정
+- 새 phase 디렉토리 안 만듦
+
+### 🚨 큰 버그 — `/diagnose` 강제
+
+다음 중 *하나라도* 해당되면 무조건 `/diagnose` 써:
+- **프로덕션 버그** (사용자가 본 거)
+- **회귀 버그** (전에 고쳤는데 또 터짐)
+- **5분 헤맴** (AI가 5분 추측해도 원인 못 찾음)
+
+`/diagnose`는 AI가 *추측 모드*로 들어가서 코드 망치는 사고를 막는 안전장치. 7~8단계 정해진 절차로 *진짜 원인*을 찾아냄.
+
+### 🧹 정기 청소 — `/improve-codebase-architecture`
+
+**phase 2 끝났을 때** (= 0+1+2 누적), 그리고 그 후 *짝수 phase 끝마다*:
+
+```
+/improve-codebase-architecture
+```
+
+→ AI가 코드 누더기 된 부분 찾아서 청소 제안. 솔로 바이브코더의 가장 큰 함정 막기.
+
+---
+
+## 폴더 구조 (참고)
+
+```
+프로젝트-루트/
+├── CLAUDE.md           헌법 (AI가 절대 어기면 안 되는 룰)
+├── AGENTS.md           (CLAUDE.md 심볼릭 링크 — Codex 호환)
+├── CONTEXT.md          도메인 용어 사전 (그릴이 lazy 갱신)
+│
+├── docs/
+│   ├── PRD.md          무엇을 만드나
+│   ├── ARCHITECTURE.md 어떻게 만드나
+│   └── ADR.md          왜 이걸 골랐나 + 배운 거
+│
+├── phases/             작업 일정 (phase 단위)
+│   ├── index.json
+│   └── {N-task}/
+│       ├── index.json
+│       └── step{M}.md  구현 지시서
+│
+├── handoffs/           세션 일지 (git에 commit)
+├── prototypes/         실험 코드 (검증 후 삭제)
+│
+├── scripts/
+│   ├── execute.py      step 자동 실행 엔진
+│   └── hooks/          위험 명령 가드
+│
+└── .claude/
+    ├── commands/
+    │   ├── harness-write.md   ← 명령 본문
+    │   ├── harness-go.md      ← 명령 본문
+    │   └── review.md
+    └── agents/         서브에이전트 (필요시 만듦)
+```
+
+---
+
+## 자주 헷갈리는 것 (FAQ)
+
+### Q. `harness-write`랑 `harness-go` 뭐 먼저?
+
+```
+write 먼저, go 나중.
+write = "문서 채우기"
+go = "코드 짜기"
+```
+
+### Q. 그릴 안 하고 바로 `harness-write` 해도 돼?
+
+가능하지만 비추. AI가 컨텍스트 부족하면 *"그릴부터 권장"* 안내가 뜸. 그릴이 자연스러우니 그냥 그릴부터.
+
+### Q. PRD.md에 v2 섹션 추가? 아니면 새 PRD 파일?
+
+**추가.** 한 PRD에 v1, v2, v3 섹션이 시간순 누적. *"이 제품이 어떻게 자라왔는가"*가 한 파일에 다 보임.
+
+### Q. `handoffs/` 폴더는 git에 commit?
+
+**응, 한다.** 다음 머신/환경에서 컨텍스트 이어가야 하므로.
+
+### Q. 프로토타입 코드 어디?
+
+`prototypes/{question}/` 폴더. 검증 끝나면 답만 docs에 박고 폴더 *삭제*.
+
+### Q. `gh` CLI 셋업 어떻게?
+
+```bash
+gh auth login
+```
+
+**1회만.** 그 후엔 `harness-go`가 알아서 GitHub Issue 발행함.
+
+### Q. 옛 `/harness` 명령은?
+
+폐기됐어. `harness-write` + `harness-go`로 *분리됨*. 한 명령에 3가지 모드 추론하던 헷갈림 제거.
+
+---
+
+## 추가 셋업 (1회만)
+
+### `/handoff` 명령 설치
+
+`/handoff`는 *user 전역 명령*이라 이 하네스에 포함돼 있지 않음. 새 맥북·새 환경에서는 별도 설치 필요:
+
+```
+/Users/{유저}/.claude/commands/handoff.md
+```
+
+이 파일을 별도로 둬야 함. 감독님 자작 명령.
+
+### matt-pocock 스킬 설치
+
+`/grill-with-docs`, `/diagnose`, `/improve-codebase-architecture`, `/prototype` 등은 matt-pocock 글로벌 스킬. 한 번 설치하면 모든 프로젝트에서 사용 가능:
+
+```bash
+# https://github.com/mattpocock/skills 참고
+```
+
+---
+
+## 폴더에 들어있는 거 한 줄씩
+
+| 자산 | 뭐 하는 건지 |
+|---|---|
+| `docs/` | PRD, ARCHITECTURE, ADR 템플릿. 새 프로젝트마다 AI가 채움. |
+| `CLAUDE.md` / `AGENTS.md` | 프로젝트 헌법. Claude Code, Codex 둘 다 읽음. |
+| `.claude/commands/harness-write.md` | `/harness-write` 명령 본문 |
+| `.claude/commands/harness-go.md` | `/harness-go` 명령 본문 |
+| `.claude/commands/review.md` | `/review` 명령 (PR 전 체크) |
+| `.claude/agents/` | 서브에이전트 정의 (필요할 때 만들어 쓰는 용) |
+| `scripts/execute.py` | phase 자동 실행 엔진 |
+| `scripts/hooks/` | 위험 명령 차단, 반복 에러 감지 |
+| `phases/` | 실제 구현 step 들어가는 곳 (`/harness-go` 명령으로 생성) |
+| `handoffs/` | 세션 종료 전 `/handoff`로 저장한 컨텍스트 |
+| `prototypes/` | 그릴 도중 만든 throwaway 코드 (검증 후 삭제) |
+
+---
+
+## 한 장 요약 (감독님이 까먹어도 이거 한 장만 보면 됨)
+
+```
+새 프로젝트:
+  1. github "Use this template" → clone → claude
+
+매 큰 작업:
+  1. /grill-with-docs    ← 깊이 인터뷰
+  2. /harness-write      ← docs 자동 채움
+  3. /harness-go         ← phase 설계 + 자동 실행
+  4. /handoff            ← 세션 끝낼 때
+
+작은 fix: 직접 수정 (사이클 스킵)
+큰 버그: /diagnose
+정기 청소 (phase 2, 4, 6...): /improve-codebase-architecture
+```
