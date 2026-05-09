@@ -34,28 +34,65 @@ A·B = *폴더 우선* 패턴 (GitHub 나중에 한 줄로 연결). C = *GitHub 
 
 ### 경로 A — `degit` 한 줄 (터미널 친화)
 
+A에는 두 가지 변형이 있습니다. *결과는 동일*, "어디서 명령을 치느냐 / 폴더를 누가 만드느냐"가 다름.
+
+#### A-1. 상위 폴더에서 — 새 폴더까지 만들면서 가져오기
+
 ```bash
-npx degit markdap/harness-nubnub my-project
-cd my-project
+cd /Users/{me}/from_github
+npx degit markdap/harness-nubnub todo-test
+cd todo-test
 git init
 claude
 ```
 
-→ `/grill-with-docs`로 시작.
+결과:
+
+```
+from_github/
+  └ todo-test/
+      └ 템플릿 파일들
+```
+
+#### A-2. 이미 만들어둔 폴더 안에서 — 그 폴더 안에 풀기
+
+```bash
+cd {todo-test 폴더 절대경로}
+npx degit markdap/harness-nubnub .
+git init
+claude
+```
+
+여기서 `.`은 "현재 폴더"라는 뜻.
+
+결과:
+
+```
+todo-test/
+  └ 템플릿 파일들
+```
+
+**핵심 차이:**
+- **A-1:** `degit`이 `todo-test` 폴더를 *새로* 만듦 (상위 폴더에서 명령)
+- **A-2:** 내가 *이미 들어가 있는* 폴더 안에 그대로 풀어넣음 (Finder 등에서 폴더 미리 만들어 둔 케이스)
+
+→ 둘 다 끝나면 `/grill-with-docs`로 시작.
 
 **이게 무슨 의미냐 (바이브코더 관점):**
 - 터미널 한 줄로 끝. 단계 수 가장 적음.
 - `degit`이 *템플릿의 `.git` 빼고* 깨끗한 복사본만 떨어뜨려 줌 → clone 후 `.git` 정리할 필요 X.
-- 명령에서 폴더 이름 즉시 지정 가능.
+- A-1은 명령 안에서 폴더 이름을 *즉시 지정* / A-2는 *이미 만들어 둔 폴더 이름*을 그대로 사용.
 - 결과적으로 *내 폴더 + 템플릿 파일 + 빈 git* 상태로 시작.
 
 **유의사항:**
 - **`git init` 빼먹지 말 것.** 안 하면 `/harness-go` → `execute.py` 자동 커밋 단계에서 깨짐.
 - Node.js 필요. Claude Code 깔려있으면 이미 있음.
+- **A-2는 *비어있는 폴더*에서만 안전.** 이미 다른 파일이 들어있는 폴더에 풀면 충돌 가능.
 
 **언제 이걸 고르나:**
-- 매번 새 실험 빠르게 시작하고 싶을 때
-- GitHub은 살아남은 후 만들 생각
+- **A-1**: 상위 폴더에서 *명령 한 줄로 폴더까지 만들며* 빠르게 시작
+- **A-2**: Finder 등 GUI에서 *폴더부터 만들어 둔 다음* 그 안에 채우는 스타일
+- 공통: GitHub은 살아남은 후 만들 생각
 
 ---
 
