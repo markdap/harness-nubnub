@@ -3,6 +3,8 @@
 직전 그릴(`/grill-with-docs`) 결과를 받아서 docs 4개 파일에 자동 분배 매핑한다.
 사용자 추가 입력 0회를 목표.
 
+> **호출 직전 `.claude/WORKFLOW.md`를 1회 참조** — 워크플로우 5단계 / 출처 매핑 / 영구 의존성(`/grill-with-docs`=matt-pocock, `/design-consultation`=gstack) 인지. 새 세션에서도 이 파일이 워크플로우 단일 마스터.
+
 ---
 
 ## 0. 그릴 + 디자인 선행 확인
