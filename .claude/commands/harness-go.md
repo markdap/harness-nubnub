@@ -142,9 +142,20 @@ test -f tests/{새-테스트-파일}.test.ts && npm test
 
 ---
 
-## 5. GitHub Issue 자동 발행
+## 5. GitHub Issue 자동 발행 (git remote 있을 때만)
 
-`phases` 파일 생성 후 + `execute.py` 호출 *직전*에 자동:
+`phases` 파일 생성 후 + `execute.py` 호출 *직전*에:
+
+### 5-1. git remote 감지
+
+```bash
+git remote get-url origin 2>/dev/null
+```
+
+- **origin 있음** (GitHub 연결됨) → 5-2로 진행 (Issue 자동 발행)
+- **origin 없음** (폴더 우선 패턴, GitHub 아직 X) → 5-3로 진행 (Issue 발행 건너뜀, phase 진행은 정상)
+
+### 5-2. Issue 발행 (origin 있을 때)
 
 ```bash
 gh issue create \
@@ -159,6 +170,14 @@ PR 생성 시 commit message에 `Closes #N` 자동 포함 → 머지 시 자동 
 ```bash
 gh auth login
 ```
+
+### 5-3. Issue 건너뜀 (origin 없을 때)
+
+다음 안내만 출력하고 phase 진행 (실행은 정상):
+
+> "GitHub remote가 연결되지 않아 Issue 자동 발행을 건너뛰었습니다. 살아남은 프로젝트라면 `gh repo create {name} --private --source=. --push`로 GitHub에 연결하세요. 다음 phase부터 Issue 자동 발행이 켜집니다."
+
+**중요:** 이 분기 때문에 *폴더 우선* 패턴 (GitHub 나중에 연결)도 사이클이 깨지지 않고 굴러간다.
 
 ---
 
