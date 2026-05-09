@@ -43,6 +43,8 @@ cd /Users/{me}/from_github
 npx degit markdap/harness-nubnub todo-test
 cd todo-test
 git init
+git branch -m main
+git add . && git commit -m "chore: initial commit from harness-nubnub template"
 claude
 ```
 
@@ -60,6 +62,8 @@ from_github/
 cd {todo-test 폴더 절대경로}
 npx degit markdap/harness-nubnub .
 git init
+git branch -m main
+git add . && git commit -m "chore: initial commit from harness-nubnub template"
 claude
 ```
 
@@ -103,8 +107,10 @@ todo-test/
 3. 압축풀기 + 폴더 이름 원하는 걸로 변경
 4. 터미널에서 `cd {폴더}`
 5. **`git init`** ← 빼먹지 마세요
-6. `claude`
-7. `/grill-with-docs`부터
+6. `git branch -m main` ← `master` → `main` 이름 정리 (GitHub 표준과 맞춤)
+7. `git add . && git commit -m "chore: initial commit from harness-nubnub template"` ← 첫 commit으로 `/harness-go` 자동저장 기준점 마련
+8. `claude`
+9. `/grill-with-docs`부터
 
 **이게 무슨 의미냐 (바이브코더 관점):**
 - GitHub 웹사이트에서 *클릭*으로 시작 → 시각적으로 *"내가 뭘 받고 있는지"* 확인 가능. 안심감.
@@ -391,9 +397,10 @@ gh auth login
 
 ```
 새 프로젝트 (폴더 우선, 추천):
-  1. npx degit markdap/harness-nubnub my-project
-  2. cd my-project && git init && claude
-  3. /grill-with-docs로 시작
+  1. npx degit markdap/harness-nubnub my-project && cd my-project
+  2. git init && git branch -m main
+  3. git add . && git commit -m "chore: initial commit from harness-nubnub template"
+  4. claude → /grill-with-docs
 
 매 큰 작업:
   1. /grill-with-docs    ← 깊이 인터뷰
