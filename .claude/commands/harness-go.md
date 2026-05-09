@@ -3,6 +3,8 @@
 docs가 채워진 상태에서, 다음 phase의 step들을 설계하고 `execute.py`로 자동 실행한다.
 GitHub Issue 자동 발행 + AC에 신규 테스트 검증 강제 + phase 종료 후 레슨런 prompt까지.
 
+> **호출 직전 `.claude/WORKFLOW.md`를 1회 참조** — 워크플로우 5단계 / 출처 매핑 / 매일 깎기 보조 스킬 출처(`/impeccable`=Phil Bakaus, `/design-review`·`/qa`=gstack) 인지. 새 세션에서도 이 파일이 워크플로우 단일 마스터.
+
 ---
 
 ## 0. 가드 — docs 상태 체크
