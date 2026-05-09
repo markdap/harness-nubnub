@@ -168,16 +168,17 @@ gh repo create my-project --private --source=. --push
 
 ---
 
-## ⭐ 매번 같은 4단계 사이클 (외워둘 것)
+## ⭐ 매번 같은 5단계 사이클 (외워둘 것)
 
 ```
-1. /grill-with-docs    ← 아이디어를 AI랑 깊이 파기
-2. /harness-write      ← AI가 자동으로 문서 채워줌
-3. /harness-go         ← AI가 자동으로 코드 짜줌
-4. /handoff            ← 세션 끝낼 때 (트리거 룰)
+1. /grill-with-docs       ← 아이디어를 AI랑 깊이 파기
+2. /design-consultation   ← 디자인 토큰 박기 (raw는 docs/design-references/)
+3. /harness-write         ← AI가 자동으로 문서 채워줌 (DESIGN.md를 input으로)
+4. /harness-go            ← AI가 자동으로 코드 짜줌 (DESIGN.md를 reference로)
+5. /handoff               ← 세션 끝낼 때 (트리거 룰)
 ```
 
-이게 *전부야*. 매번 같음.
+이게 *전부야*. 매번 같음. **단계는 *깎기 강제*용 — 외우는 부담이 아니라 퀄리티 가드레일.** 비-frontend 프로젝트나 이번엔 디자인 스킵 원하면 2단계에서 *"이번은 스킵"* 한 줄로 건너뛸 수 있음.
 
 ---
 
@@ -196,9 +197,22 @@ gh repo create my-project --private --source=. --push
 - **도메인 용어** 정해지면 → `CONTEXT.md`가 자동으로 생성됨.
 - **되돌리기 어려운 결정** 나오면 → ADR(결정 일지) 후보로 표시됨.
 
-**언제 끝남?** 감독님이 *"이제 충분해"* 싶을 때. 보통 30분~1시간.
+**언제 끝남?** 그릴이 첫 라운드에 *이 프로젝트의 큰 결정 트리 N개*를 함께 정의하고, 매 라운드 말미에 *진척률 N/M*을 보여줌. M=N이 되면 그릴 종료 + `/design-consultation` 권유 안내가 자동으로 뜸. 보통 30분~1시간.
 
-### 2️⃣ `/harness-write` — 자동 문서 채우기
+### 2️⃣ `/design-consultation` — 디자인 토큰 박기
+
+그릴 끝나면 디자인 단계. *모든 프로젝트* 강제(이번 프로젝트는 스킵 가능 — *"이번은 스킵"* 한 줄).
+
+AI가:
+- `docs/design-references/`에 사용자가 떨군 raw 자료(캡쳐·다른 프로젝트 DESIGN.md·무드보드)를 *input*으로 흡수
+- 색/폰트/간격/모션 토큰을 사용자와 함께 결정 → `docs/DESIGN.md`로 합성
+- raw는 절대 가공·요약·이동·삭제 X. 원본은 사용자 자산
+
+**왜 별도 단계?** 디자인 토큰 없이 `/harness-write`로 가면 PRD §디자인 방향이 *추상 의도 1단락*에 그치고, 구현 단계에서 매번 즉흥("AI 슬롭 디자인"). DESIGN.md가 *두 개의 다른 AI 세션이 동일한 화면을 만들 수 있는* 기준선.
+
+**진입 시점에 이미 자료 모아놨다면?** 하네스 진입 직후 `docs/design-references/`에 바로 떨궈도 됨. 폴더는 템플릿 기본 자산으로 미리 존재.
+
+### 3️⃣ `/harness-write` — 자동 문서 채우기
 
 그릴 끝나면 그냥 `/harness-write` 한 줄 치면 됨. **인자(추가 입력) 없음.**
 
@@ -215,7 +229,7 @@ AI가 자동으로:
 - 옛 `## v1` 섹션은 *superseded* 태그로 보존
 - 새 섹션에 *"이 변경이 ARCH/ADR/CLAUDE에 미치는 영향"* 명시
 
-### 3️⃣ `/harness-go` — 자동 코드 짜기
+### 4️⃣ `/harness-go` — 자동 코드 짜기
 
 문서 채웠으면 그냥 `/harness-go` 치면 됨.
 
@@ -228,7 +242,7 @@ AI가 알아서:
 6. **GitHub Issue 자동 발행** (PR 머지하면 자동 close)
 7. 끝나면 *"이번에 시도했지만 안 된 것 있나요?"* 물어봄 → 있으면 `docs/ADR.md`에 LESSON으로 박힘
 
-### 4️⃣ `/handoff` — 세션 보존
+### 5️⃣ `/handoff` — 세션 보존
 
 세션 끝낼 때 한 번 치면 됨.
 
@@ -284,7 +298,9 @@ AI가 *"오늘 뭐 했고, 어디서 막혔고, 내일 뭐 해야 하는지"*를
 ├── docs/
 │   ├── PRD.md          무엇을 만드나
 │   ├── ARCHITECTURE.md 어떻게 만드나
-│   └── ADR.md          왜 이걸 골랐나 + 배운 거
+│   ├── ADR.md          왜 이걸 골랐나 + 배운 거
+│   ├── DESIGN.md       디자인 토큰 (색/폰트/간격/모션)
+│   └── design-references/  raw 디자인 자료 (사용자가 떨굼, AI는 읽기만)
 │
 ├── phases/             작업 일정 (phase 단위)
 │   ├── index.json
@@ -387,7 +403,8 @@ git config --global init.defaultBranch main
 
 | 자산 | 뭐 하는 건지 |
 |---|---|
-| `docs/` | PRD, ARCHITECTURE, ADR 템플릿. 새 프로젝트마다 AI가 채움. |
+| `docs/` | PRD, ARCHITECTURE, ADR, DESIGN 템플릿. 새 프로젝트마다 AI가 채움. |
+| `docs/design-references/` | raw 디자인 자료 둘 자리 (사용자가 떨굼). AI는 *읽기만*하고 가공/이동 X. `/design-consultation`이 input으로 흡수해 `docs/DESIGN.md` 합성. |
 | `CLAUDE.md` / `AGENTS.md` | 프로젝트 헌법. Claude Code, Codex 둘 다 읽음. |
 | `.claude/commands/harness-write.md` | `/harness-write` 명령 본문 |
 | `.claude/commands/harness-go.md` | `/harness-go` 명령 본문 |
@@ -411,10 +428,11 @@ git config --global init.defaultBranch main
   4. claude → /grill-with-docs
 
 매 큰 작업:
-  1. /grill-with-docs    ← 깊이 인터뷰
-  2. /harness-write      ← docs 자동 채움
-  3. /harness-go         ← phase 설계 + 자동 실행 (GitHub 있으면 Issue 자동, 없으면 건너뜀)
-  4. /handoff            ← 세션 끝낼 때
+  1. /grill-with-docs       ← 깊이 인터뷰 (진척률 N/M 자동)
+  2. /design-consultation   ← DESIGN.md 합성 (raw는 docs/design-references/, 이번 스킵 가능)
+  3. /harness-write         ← docs 자동 채움
+  4. /harness-go            ← phase 설계 + 자동 실행 (GitHub 있으면 Issue 자동, 없으면 건너뜀)
+  5. /handoff               ← 세션 끝낼 때
 
 살아남으면 GitHub 연결:
   gh repo create my-project --private --source=. --push
