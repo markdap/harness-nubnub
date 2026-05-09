@@ -355,6 +355,14 @@ gh auth login
 
 ## 추가 셋업 (1회만)
 
+### git 디폴트 브랜치 `main`으로 (`master` 안 나오게)
+
+```bash
+git config --global init.defaultBranch main
+```
+
+새 머신·새 환경에서 1회만. 이거 안 하면 `git init` 시 시스템 디폴트에 따라 `master`로 시작될 수 있고, 그러면 매번 `git branch -m main` 손으로 쳐야 함. 1회 설정하면 다음부터 README 명령 그대로 자동 작동.
+
 ### `/handoff` 명령 설치
 
 `/handoff`는 *user 전역 명령*이라 이 하네스에 포함돼 있지 않음. 새 맥북·새 환경에서는 별도 설치 필요:
