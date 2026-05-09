@@ -8,11 +8,12 @@
 
 Claude Code (또는 Codex) 와 함께 *제품을 0에서 시작해서 운영까지* 만드는 워크플로우 템플릿.
 
-**매번 같은 4단계 명령어**로:
+**매번 같은 5단계 명령어**로:
 1. 아이디어를 깊이 파고
-2. 자동으로 문서화하고
-3. 자동으로 코드를 짜고
-4. 세션을 보존한다.
+2. 디자인 토큰 박고
+3. 자동으로 문서화하고
+4. 자동으로 코드를 짜고
+5. 세션을 보존한다.
 
 이걸 무한 반복하면 됨.
 
@@ -168,6 +169,25 @@ gh repo create my-project --private --source=. --push
 
 ---
 
+## 누가 / 뭘 / 산출물 — 한 장 표 (헷갈림 종결용)
+
+5단계 사이클을 보기 전에 *역할 분담*부터 머리에 박아두면 *"이건 누가 하지?"*가 안 생깁니다.
+
+| 작업 | 누가 | 산출물 |
+|---|---|---|
+| **Phase 정의** | **감독님** (1차 안은 `/harness-write`가 자동으로 박음) | `docs/PRD.md §핵심 기능`에 `- [ ] phase {N-name}: ...` 한 줄씩 |
+| Phase 채우기 | `/harness-write` | PRD/ARCH/ADR/CLAUDE.md 본문 |
+| Step 분할 | `/harness-go §3` | step 설계안 (감독님 승인 대상) |
+| Step 지시서 작성 | `/harness-go §4` | `phases/{N-task}/step{M}.md` (글, 코드 X) |
+| **실제 코드 작성** | **`execute.py` (= 별도 Claude 세션들)** | `feat-{N}` 브랜치의 코드/테스트/커밋 |
+
+**핵심 직관 3개:**
+- `/harness-go`는 **지휘자**. 자기 손으로 코드 *안 짬*. step 지시서를 *글로* 쓰고 `execute.py`를 트리거.
+- *진짜 코드*는 `execute.py`가 호출하는 *별도 Claude 세션들*이 짬. 한 step씩.
+- *Phase 단위·이름·순서는 감독님이 통제*. AI가 즉석에서 만들지 않음 — `/harness-write`가 자동 1차 안 박고 감독님이 컨펌/수정.
+
+---
+
 ## ⭐ 매번 같은 5단계 사이클 (외워둘 것)
 
 ```
@@ -229,18 +249,22 @@ AI가 자동으로:
 - 옛 `## v1` 섹션은 *superseded* 태그로 보존
 - 새 섹션에 *"이 변경이 ARCH/ADR/CLAUDE에 미치는 영향"* 명시
 
-### 4️⃣ `/harness-go` — 자동 코드 짜기
+### 4️⃣ `/harness-go` — *지휘자* (코드는 `execute.py`가 짬)
 
-문서 채웠으면 그냥 `/harness-go` 치면 됨.
+문서 채웠으면 그냥 `/harness-go` 치면 됨. **`/harness-go`는 *코드를 직접 짜지 않습니다*** — step 지시서를 *글로* 쓰고 `execute.py`를 트리거하는 *지휘자*. 진짜 코드는 별도 Claude 세션들이 한 step씩 작성.
 
 AI가 알아서:
-1. **다음 phase 이름 추론** (예: *"1-social-alarm 맞나요?"*)
-2. **step 6개로 쪼갠 계획** 보여줌 → 감독님 승인
-3. **`python3 scripts/execute.py 1-social-alarm` 자동 실행**
-4. step별로 알아서 코드 작성, 테스트, 커밋
-5. 실패하면 *3번 재시도*
-6. **GitHub Issue 자동 발행** (PR 머지하면 자동 close)
-7. 끝나면 *"이번에 시도했지만 안 된 것 있나요?"* 물어봄 → 있으면 `docs/ADR.md`에 LESSON으로 박힘
+1. **PRD §핵심 기능 체크리스트에서 *다음 미완료 phase* 가져옴** — 즉석 추측 X. 감독님이 PRD에 박아둔 것만 후보. 거기 없으면 거부 + *"PRD에 추가해주세요"* 안내.
+2. **step N개로 쪼갠 설계안** 보여줌 → 감독님 승인 (§3 끝 *기본 정지 게이트* — *"계획만 보여줘"* 명시 안 해도 항상 멈춤)
+3. **`phases/{N-task}/step{M}.md` 지시서 파일 생성** (감독님 승인 후)
+4. **`python3 scripts/execute.py {N-task}` 자동 실행** — 여기서부터 *진짜 코드 작성*
+5. step별로 별도 Claude 세션이 코드 작성, 테스트, 커밋
+6. 실패하면 *3번 재시도*
+7. **GitHub Issue 자동 발행** (PR 머지하면 자동 close)
+8. 끝나면 *"이번에 시도했지만 안 된 것 있나요?"* 물어봄 → 있으면 `docs/ADR.md`에 LESSON으로 박힘
+9. *매일 깎기* 권유 (`/impeccable` + `/design-review` + `/qa`, *이번은 스킵* 가능)
+
+**phase가 여러 개면?** `/harness-go`를 *phase 수만큼 호출*. 한 번에 한 phase씩 — phase 0 끝나면 다시 `/harness-go` 호출 → AI가 phase 1 가져와서 step 분할.
 
 ### 5️⃣ `/handoff` — 세션 보존
 
@@ -255,6 +279,63 @@ AI가 *"오늘 뭐 했고, 어디서 막혔고, 내일 뭐 해야 하는지"*를
 - phase 끝났을 때
 - 1시간 이상 자리 뜨기 전
 - *"오늘 시도했는데 안 된 거"* 1건 이상 있을 때
+
+---
+
+## 실전 흐름 예시 — *기상 알림 앱* (베스트 프랙티스 한 장)
+
+감독님이 *"친구랑 같이 일어나는 기상 알림 앱"* 한 줄을 던졌을 때:
+
+```
+[Day 1 — 기획]
+
+  /grill-with-docs                      ← 1시간 깊이 인터뷰
+    AI: "사용자가 누구야? 결제는? 친구는 어떻게 연결?"
+    ...
+    AI: "결정 트리 5/5 완료. /design-consultation 권유합니다."
+
+  /design-consultation                  ← (raw 자료 docs/design-references/에 미리 떨궈두면 흡수)
+    → docs/DESIGN.md 합성 (색·폰트·간격·모션 토큰)
+
+  /harness-write                        ← 추가 입력 0회
+    → docs/PRD.md 자동 채움. §핵심 기능에 체크리스트 1차 안:
+       - [ ] phase 0-mvp: 기본 알림 + 자유 시간 설정
+       - [ ] phase 1-social: 친구 깨우기 채널
+       - [ ] phase 2-stats: 기상 통계 대시보드
+    AI: "phase 1차 안입니다. OK한가요?"
+    감독님: "OK. 단 phase 1 이름을 'friend-wake'로 바꿔줘."
+    → PRD 갱신. ARCH/ADR/CLAUDE 같이 채워짐.
+
+[Day 1 — 첫 phase 구현]
+
+  /harness-go                           ← 인자 없음 = 자동 모드
+    AI: "다음 phase로 '0-mvp' (기본 알림) 진행할까요?"
+    감독님: "진행"
+    AI: step 5개 설계안 보여줌
+    AI: "OK한가요?" ← §3 기본 정지 게이트 (감독님이 '계획만' 명시 안 해도 멈춤)
+    감독님: "step 3은 더 작게 쪼개. 그 외 OK"
+    → step 6개로 갱신
+    감독님: "진행"
+    → phases/0-mvp/step{0..5}.md 생성
+    → execute.py 자동 실행 → 별도 Claude 세션들이 코드 작성 + 테스트 + 커밋
+    → phase 0 완료. LESSON prompt → 매일 깎기 권유
+
+  /handoff                              ← 세션 종료 전
+
+[Day 2 — 다음 phase]
+
+  /context-restore (또는 핸드오프 read)
+  /harness-go                           ← 다시 호출
+    AI: "다음 phase로 '1-friend-wake' 진행할까요?"   ← PRD 체크리스트 다음 미완료
+    ...
+```
+
+**핵심 베스트 프랙티스:**
+- ✅ Phase는 *3개 이하* — 감독님이 통제 가능한 단위.
+- ✅ Phase 이름은 `{N}-{kebab-name}` — `/harness-go`가 폴더명으로 그대로 사용.
+- ✅ `docs/design-references/`에 raw 자료 *미리* 떨궈두기 — `/design-consultation` 호출 시점엔 이미 거기 있어야 흡수 빠름.
+- ✅ Phase 끝마다 *매일 깎기* 한 번씩 — 누적되면 *AI 슬롭*이 산처럼 쌓임.
+- ❌ Phase 한 개에 *기능 5개* 몰지 말 것 — step 분할이 거대해짐. 작게 쪼개는 게 디버깅 친화.
 
 ---
 
@@ -331,9 +412,28 @@ AI가 *"오늘 뭐 했고, 어디서 막혔고, 내일 뭐 해야 하는지"*를
 
 ```
 write 먼저, go 나중.
-write = "문서 채우기"
-go = "코드 짜기"
+write = "문서 채우기 (phase 1차 안까지)"
+go   = "step 분할 + execute.py 트리거" (지휘자, 코드 직접 X)
 ```
+
+### Q. Phase는 누가 만들어? Step은 누가 쪼개?
+
+| 작업 | 누가 |
+|---|---|
+| Phase *후보 1차 안* | `/harness-write`가 PRD §핵심 기능에 자동으로 체크리스트 박음 |
+| Phase *최종 컨펌·수정* | **감독님** (`/harness-write` 끝에 묻습니다) |
+| Step *분할* | `/harness-go §3`이 즉석에서 N개로 쪼갬 → 감독님 승인 (§3 끝 *기본 정지 게이트*) |
+| 실제 *코드 작성* | `execute.py`가 호출하는 *별도 Claude 세션들* (한 step씩) |
+
+→ `/harness-go`가 코드 짜는 거 *아닙니다*. 지휘자입니다.
+
+### Q. *"계획만 먼저 보여줘"* 같이 명시해야 멈춰?
+
+**아니, 명시 안 해도 *항상* 멈춥니다.** `/harness-go §3`(step 설계) 끝에 *기본 정지 게이트*가 있어서, 감독님이 *"진행/OK/좋다"* 명시하기 전엔 §4(파일 생성)으로 안 넘어감. 감독님이 매번 *"계획만"* 강조할 필요 없음.
+
+### Q. Phase 여러 개를 한 번에 다 처리할 순 없어?
+
+**없음. 한 번에 한 phase씩.** Phase 3개 박혀있으면 `/harness-go`를 3번 호출. 이유: 한 phase 끝마다 *매일 깎기*(impeccable·design-review·qa)와 *LESSON*을 박는 게 *깎기 강제* 철학이라 — 한 번에 다 가면 누락됨.
 
 ### Q. 그릴 안 하고 바로 `harness-write` 해도 돼?
 
@@ -430,8 +530,9 @@ git config --global init.defaultBranch main
 매 큰 작업:
   1. /grill-with-docs       ← 깊이 인터뷰 (진척률 N/M 자동)
   2. /design-consultation   ← DESIGN.md 합성 (raw는 docs/design-references/, 이번 스킵 가능)
-  3. /harness-write         ← docs 자동 채움
-  4. /harness-go            ← phase 설계 + 자동 실행 (GitHub 있으면 Issue 자동, 없으면 건너뜀)
+  3. /harness-write         ← docs 자동 채움 + PRD §핵심 기능에 phase 체크리스트 1차 안 → 감독님 컨펌
+  4. /harness-go            ← PRD에서 다음 phase 가져옴 → step 분할 → §3 게이트(자동 정지) → execute.py 코드 작성
+                              ※ phase 여러 개면 phase 수만큼 호출
   5. /handoff               ← 세션 끝낼 때
 
 살아남으면 GitHub 연결:
